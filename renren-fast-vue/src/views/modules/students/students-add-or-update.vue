@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.studentId ? '新增' : '修改'"
+    :title="!dataForm.saveOrupdate ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
@@ -38,6 +38,7 @@
     data () {
       return {
         visible: false,
+        saveOrupdate:false,
         dataForm: {
           studentId: 0,
           name: '',
@@ -49,6 +50,9 @@
           phone: ''
         },
         dataRule: {
+          studentId:[
+            { required: true, message: '学生id不能为空', trigger: 'blur' }
+          ],
           name: [
             { required: true, message: '姓名不能为空', trigger: 'blur' }
           ],
@@ -75,10 +79,18 @@
     },
     methods: {
       init (id) {
-        this.dataForm.studentId = id || 0
+        this.dataForm.studentId = id || null
         this.visible = true
+        if(id==undefined)
+      {
+        this.saveOrupdate=false
+      }
+      else
+      {
+        this.saveOrupdate=true
+      }
         this.$nextTick(() => {
-          this.$refs['dataForm'].resetFields()
+          //this.$refs['dataForm'].resetFields()
           if (this.dataForm.studentId) {
             this.$http({
               url: this.$http.adornUrl(`/students/students/info/${this.dataForm.studentId}`),
@@ -103,7 +115,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/students/students/${!this.dataForm.studentId ? 'save' : 'update'}`),
+              url: this.$http.adornUrl(`/students/students/${!this.saveOrupdate ? 'save' : 'update'}`),
               method: 'post',
               data: this.$http.adornData({
                 'studentId': this.dataForm.studentId || undefined,

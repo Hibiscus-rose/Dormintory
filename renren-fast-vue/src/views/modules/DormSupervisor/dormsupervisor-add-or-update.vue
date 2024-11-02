@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.employeeId ? '新增' : '修改'"
+    :title="!this.saveOrupdate ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
@@ -32,6 +32,7 @@
     data () {
       return {
         visible: false,
+        saveOrupdate:false,
         dataForm: {
           employeeId: 0,
           name: '',
@@ -55,16 +56,27 @@
           ],
           buildingId: [
             { required: true, message: '负责楼栋号不能为空', trigger: 'blur' }
+          ],
+          employeeId: [
+            { required: true, message: '职工号不能为空', trigger: 'blur' }
           ]
         }
       }
     },
     methods: {
       init (id) {
-        this.dataForm.employeeId = id || 0
+        this.dataForm.employeeId = id || null
         this.visible = true
+        if(id==null)
+          {
+            this.saveOrupdate=false
+          }
+        else
+          {
+             this.saveOrupdate=true
+          }
         this.$nextTick(() => {
-          this.$refs['dataForm'].resetFields()
+         // this.$refs['dataForm'].resetFields()
           if (this.dataForm.employeeId) {
             this.$http({
               url: this.$http.adornUrl(`/DormSupervisor/dormsupervisor/info/${this.dataForm.employeeId}`),
@@ -87,7 +99,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/DormSupervisor/dormsupervisor/${!this.dataForm.employeeId ? 'save' : 'update'}`),
+              url: this.$http.adornUrl(`/DormSupervisor/dormsupervisor/${!this.saveOrupdate ? 'save' : 'update'}`),
               method: 'post',
               data: this.$http.adornData({
                 'employeeId': this.dataForm.employeeId || undefined,

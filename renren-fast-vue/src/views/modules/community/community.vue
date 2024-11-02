@@ -81,8 +81,7 @@
       AddOrUpdate
     },
     activated () {
-      //this.getDataList()
-      this.findAll()
+      this.getDataList()
     },
     methods: {
       // 获取数据列表
@@ -107,26 +106,7 @@
           this.dataListLoading = false
         })
       },
-      findAll() {
-        this.$http({
-          url: this.$http.adornUrl(`/community/community/findAll`),
-          method: 'get',
-          params: this.$http.adornParams()
-        })
-      .then(({ data }) => {
-        console.log(data);
-          if (data && data.code === 0) {
-            this.dataList=data.list
-          }
-        })
-      .catch((error) => {
-          console.error('Error fetching data:', error);
-          if (error.response && error.response.data && error.response.data.message) {
-            console.error('Error message:', error.response.data.message);
-          }
-        });
 
-      },
       // 每页数
       sizeChangeHandle (val) {
         this.pageSize = val
